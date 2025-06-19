@@ -39,6 +39,8 @@ export class HomeComponent implements OnInit {
   }
 
   onJoinRoom(): void {
+    console.log(this.roomName);
+
     if (this.roomName) {
       this.chatService.joinChatRoom(this.roomName)
       .then((res: ResponseData<boolean>) => {
