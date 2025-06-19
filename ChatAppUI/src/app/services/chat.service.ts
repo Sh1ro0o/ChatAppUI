@@ -2,6 +2,7 @@ import { Injectable } from "@angular/core";
 import * as signalR from '@microsoft/signalr';
 import { environment } from "../../environments/environment";
 import { LocalStorageService } from "./local-storage.service";
+import { ResponseData } from "../models/responses/response-data";
 
 @Injectable({
   providedIn: 'root',
@@ -18,32 +19,45 @@ export class ChatService {
             .withUrl(`${this.apiUrl}/chat`)
             .configureLogging(signalR.LogLevel.Information)
             .build();
-
-        console.log('constructed')
     }
 
-    connectionStart() {
-        console.log('connectionStart')
-        this.connection.start()
-        .then(() => console.log('SignalR Connected.'))
-        .catch(err => {
-            console.error('SignalR connection error:', err);
-        });
+    connectionStart(): Promise<boolean> {
+        return this.connection.start()
+            .then(() => true)
+            .catch(() => false);
     }
 
-    connectionStop() {
-        this.connection.stop()
-        .then(() => 'SignalR Disconnected')
-        .catch(err => {
-            console.error('SignalR connection error:', err)
-        });
+    connectionStop(): Promise<boolean> {
+        return this.connection.stop()
+            .then(() => true)
+            .catch(() => false);
     }
 
-    createChatLobby() {
-        this.connection.invoke('createLobby')
-        .then(() => console.log('Lobby created!'))
-        .catch(err => {
-            console.error('SignalR connection error:', err);
-        });
+    createChatRoom(): Promise<ResponseData<boolean>> {
+        return this.connection.invoke('CreateRoom')
+            .then((data: ResponseData<boolean>) => data)
+            .catch((error) => {
+                const result: ResponseData<boolean> = {
+                    isSuccessful: false,
+                    errorMessage: 'Connection failed',
+                    data: false
+                };
+
+                return result;
+            });
+    }
+
+    joinChatRoom(roomName: string): Promise<ResponseData<boolean>> {
+        return this.connection.invoke('JoinRoom', roomName)
+            .then((data: ResponseData<boolean>) => data)
+            .catch((error) => {
+                const result: ResponseData<boolean> = {
+                    isSuccessful: false,
+                    errorMessage: 'Connection failed',
+                    data: false
+                };
+
+                return result;
+            });
     }
 }
