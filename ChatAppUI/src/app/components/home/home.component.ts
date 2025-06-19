@@ -7,7 +7,7 @@ import { ResponseData } from '../../models/responses/response-data';
   selector: 'app-home',
   imports: [FormsModule],
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss']
+  styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
   roomName: string = '';

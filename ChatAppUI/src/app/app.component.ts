@@ -6,7 +6,7 @@ import { ROUTES } from './shared/constants/routes';
   selector: 'app-root',
   imports: [RouterModule,],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+  styleUrl: './app.component.css'
 })
 export class AppComponent {
   title = 'ChatAppUI';
