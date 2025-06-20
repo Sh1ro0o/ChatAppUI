@@ -33,28 +33,26 @@ export class ChatService {
             .catch(() => false);
     }
 
-    createChatRoom(): Promise<ResponseData<boolean>> {
+    createChatRoom(): Promise<ResponseData<string>> {
         return this.connection.invoke('CreateRoom')
-            .then((data: ResponseData<boolean>) => data)
+            .then((data: ResponseData<string>) => data)
             .catch((error) => {
-                const result: ResponseData<boolean> = {
+                const result: ResponseData<string> = {
                     isSuccessful: false,
-                    errorMessage: 'Connection failed',
-                    data: false
+                    errorMessage: 'Connection failed'
                 };
 
                 return result;
             });
     }
 
-    joinChatRoom(roomName: string): Promise<ResponseData<boolean>> {
+    joinChatRoom(roomName: string): Promise<ResponseData<string>> {
         return this.connection.invoke('JoinRoom', roomName)
-            .then((data: ResponseData<boolean>) => data)
+            .then((data: ResponseData<string>) => data)
             .catch((error) => {
-                const result: ResponseData<boolean> = {
+                const result: ResponseData<string> = {
                     isSuccessful: false,
                     errorMessage: 'Connection failed',
-                    data: false
                 };
 
                 return result;
