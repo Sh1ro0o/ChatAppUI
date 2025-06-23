@@ -20,15 +20,7 @@ export class HomeComponent implements OnInit {
   private router = inject(Router);
 
   ngOnInit(): void {
-    this.chatService.connectionStart()
-    .then((success) => {
-      if(success) {
-        console.log('connection established!!!!');
-      }
-      else {
-        console.log('connection failed!!!!');
-      }
-    })
+    
   }
 
   onCreateRoom(): void {
@@ -46,16 +38,8 @@ export class HomeComponent implements OnInit {
 
   onJoinRoom(): void {
     if (this.roomName) {
-      this.chatService.joinChatRoom(this.roomName)
-      .then((res: ResponseData<string>) => {
-        if(res.isSuccessful) {
-          console.log('Joined chat room!');
-          this.router.navigate([this.ROUTES.CHAT_ROOM, res.data]);
-        }
-        else {
-          console.log('Failed to join!');
-        }
-      });
+      console.log('navigationg');
+      this.router.navigate([this.ROUTES.CHAT_ROOM, this.roomName]);
     }
   }
 }

@@ -1,8 +1,11 @@
-import { Injectable } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import * as signalR from '@microsoft/signalr';
 import { environment } from "../../environments/environment";
 import { LocalStorageService } from "./local-storage.service";
 import { ResponseData } from "../models/responses/response-data";
+import { BehaviorSubject, Observable } from "rxjs";
+import { Router } from "@angular/router";
+import { ROUTES } from "../shared/constants/routes";
 
 @Injectable({
   providedIn: 'root',
@@ -12,19 +15,34 @@ export class ChatService {
     private connection!: signalR.HubConnection;
     private apiUrl: string = environment.apiUrl;
 
+    private isConnectedSubject = new BehaviorSubject<boolean>(false);
+    isConnected$: Observable<boolean> = this.isConnectedSubject.asObservable();
+
+    private router = inject(Router);
+
     constructor(
-        private localStorageService: LocalStorageService
     ) {
         this.connection = new signalR.HubConnectionBuilder()
             .withUrl(`${this.apiUrl}/chat`)
             .configureLogging(signalR.LogLevel.Information)
             .build();
+
+        this.connection.onclose(() => {
+            this.router.navigate([ROUTES.HOME]);
+            this.isConnectedSubject.next(false);
+        });
     }
 
     connectionStart(): Promise<boolean> {
         return this.connection.start()
-            .then(() => true)
-            .catch(() => false);
+            .then(() => {
+                this.isConnectedSubject.next(true);
+                return true;
+            })
+            .catch(() => {
+                this.isConnectedSubject.next(false);
+                return false;
+            });
     }
 
     connectionStop(): Promise<boolean> {
