@@ -3,77 +3,112 @@ import * as signalR from '@microsoft/signalr';
 import { environment } from "../../environments/environment";
 import { LocalStorageService } from "./local-storage.service";
 import { ResponseData } from "../models/responses/response-data";
-import { BehaviorSubject, Observable } from "rxjs";
+import { BehaviorSubject, Observable, Subject } from "rxjs";
 import { Router } from "@angular/router";
 import { ROUTES } from "../shared/constants/routes";
+import { MessageData } from "../models/data/message-data";
+import { MessageRequest } from "../models/requests/message.request";
 
 @Injectable({
   providedIn: 'root',
 })
 
 export class ChatService {
-    private connection!: signalR.HubConnection;
-    private apiUrl: string = environment.apiUrl;
+	private connection!: signalR.HubConnection;
+	private apiUrl: string = environment.apiUrl;
 
-    private isConnectedSubject = new BehaviorSubject<boolean>(false);
-    isConnected$: Observable<boolean> = this.isConnectedSubject.asObservable();
+	private isConnectedSubject = new BehaviorSubject<boolean>(false);
+	isConnected$: Observable<boolean> = this.isConnectedSubject.asObservable();
 
-    private router = inject(Router);
+	private isNewMessageReceivedSubject = new Subject<MessageData>();
+	isNewMessageReceived$: Observable<MessageData> = this.isNewMessageReceivedSubject.asObservable();
 
-    constructor(
-    ) {
-        this.connection = new signalR.HubConnectionBuilder()
-            .withUrl(`${this.apiUrl}/chat`)
-            .configureLogging(signalR.LogLevel.Information)
-            .build();
+	private router = inject(Router);
 
-        this.connection.onclose(() => {
-            this.router.navigate([ROUTES.HOME]);
-            this.isConnectedSubject.next(false);
-        });
-    }
+	constructor( ) {
+		//Connect
+		this.connection = new signalR.HubConnectionBuilder()
+			.withUrl(`${this.apiUrl}/chat`)
+			.configureLogging(signalR.LogLevel.Information)
+			.build();
 
-    connectionStart(): Promise<boolean> {
-        return this.connection.start()
-            .then(() => {
-                this.isConnectedSubject.next(true);
-                return true;
-            })
-            .catch(() => {
-                this.isConnectedSubject.next(false);
-                return false;
-            });
-    }
+		//OnClose
+		this.connection.onclose(() => {
+			this.router.navigate([ROUTES.HOME]);
+			this.isConnectedSubject.next(false);
+		});
 
-    connectionStop(): Promise<boolean> {
-        return this.connection.stop()
-            .then(() => true)
-            .catch(() => false);
-    }
+		//OnMessageReceived
+		this.connection.on('ReceiveMessage', (message) => this.receiveMessage(message));
+	}
 
-    createChatRoom(): Promise<ResponseData<string>> {
-        return this.connection.invoke('CreateRoom')
-            .then((data: ResponseData<string>) => data)
-            .catch((error) => {
-                const result: ResponseData<string> = {
-                    isSuccessful: false,
-                    errorMessage: 'Connection failed'
-                };
+	/************************/
+	/*<---- CONNECTION ---->*/
+	/************************/
+	connectionStart(): Promise<boolean> {
+			return this.connection.start()
+					.then(() => {
+							this.isConnectedSubject.next(true);
+							return true;
+					})
+					.catch(() => {
+							this.isConnectedSubject.next(false);
+							return false;
+					});
+	}
 
-                return result;
-            });
-    }
+	connectionStop(): Promise<boolean> {
+			return this.connection.stop()
+					.then(() => true)
+					.catch(() => false);
+	}
 
-    joinChatRoom(roomName: string): Promise<ResponseData<string>> {
-        return this.connection.invoke('JoinRoom', roomName)
-            .then((data: ResponseData<string>) => data)
-            .catch((error) => {
-                const result: ResponseData<string> = {
-                    isSuccessful: false,
-                    errorMessage: 'Connection failed',
-                };
+	/*************************/
+	/*<---- HUB METHODS ---->*/
+	/*************************/
+	createChatRoom(): Promise<ResponseData<string>> {
+			return this.connection.invoke('CreateRoom')
+					.then((data: ResponseData<string>) => data)
+					.catch((error) => {
+							const result: ResponseData<string> = {
+									isSuccessful: false,
+									errorMessage: 'Connection failed!'
+							};
 
-                return result;
-            });
-    }
+							return result;
+					});
+	}
+
+	joinChatRoom(roomName: string): Promise<ResponseData<string>> {
+			return this.connection.invoke('JoinRoom', roomName)
+					.then((data: ResponseData<string>) => data)
+					.catch((error) => {
+							const result: ResponseData<string> = {
+									isSuccessful: false,
+									errorMessage: 'Connection failed!',
+							};
+
+							return result;
+					});
+	}
+
+	sendMessage(messageRequest: MessageRequest) {
+		return this.connection.invoke('SendMessage', messageRequest)
+					.then((data: ResponseData<boolean>) => data)
+					.catch((error) => {
+							const result: ResponseData<boolean> = {
+									isSuccessful: false,
+									errorMessage: 'Message failed to send!',
+							};
+
+							return result;
+					});
+	}
+
+	/****************************/
+	/*<---- CLIENT METHODS ---->*/
+	/****************************/
+	receiveMessage(message: MessageData) {
+		this.isNewMessageReceivedSubject.next(message);
+	}
 }
