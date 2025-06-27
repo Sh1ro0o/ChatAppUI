@@ -2,7 +2,7 @@
   <div class="p-[2px] glass-card container h-5/6 rounded-2xl border-3 border-white">
       <div class="h-full p-4 grid grid-rows-[auto_120px] gap-y-3 place-items-baseline">
           <!-- Messages container -->
-          <div class="w-full max-h-full pt-0 pr-2 pb-2 pl-2 glass-card overflow-y-auto custom-scrollbar">
+          <div class="w-full h-full pt-0 pr-2 pb-2 pl-2 glass-card overflow-y-auto custom-scrollbar">
             @for (messageData of messages; track $index) {
               <!-- User Message -->
               <app-user-message username="TropicalPanda12354" [message]="messageData.message"></app-user-message>
@@ -15,9 +15,9 @@
               <div [formGroup]="sendMessageForm" class="flex items-center pr-2 py-2 rounded-lg glass-card">
                   <textarea rows="4" class="block resize-none bg-[var(--color-tertiary)] mx-4 p-2.5 w-full text-sm rounded-lg border border-white focus-visible:border-red-400" placeholder="Your message..."
                       formControlName="newMessage"></textarea>
-                      <button class="inline-flex justify-center p-2 text-[var(--color-tertiary)] rounded-full cursor-pointer hover:bg-[var(--color-secondary)]">
-                      <svg class="w-5 h-5 rotate-90 rtl:-rotate-90" 
-                          (click)="onSubmit()"
+                      <button class="inline-flex justify-center p-2 text-[var(--color-tertiary)] rounded-full cursor-pointer hover:bg-[var(--color-secondary)]"
+                              (click)="onSubmit()">
+                      <svg class="w-5 h-5 rotate-90 rtl:-rotate-90"
                           aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 20">
                           <path d="m17.914 18.594-8-18a1 1 0 0 0-1.828 0l-8 18a1 1 0 0 0 1.157 1.376L8 18.281V9a1 1 0 0 1 2 0v9.281l6.758 1.689a1 1 0 0 0 1.156-1.376Z"/>
                       </svg>
