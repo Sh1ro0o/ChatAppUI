@@ -46,6 +46,7 @@ export class ChatService {
 	/*<---- CONNECTION ---->*/
 	/************************/
 	connectionStart(): Promise<boolean> {
+		console.log('connection start');
 			return this.connection.start()
 					.then(() => {
 							this.isConnectedSubject.next(true);
@@ -84,6 +85,19 @@ export class ChatService {
 					.then((data: ResponseData<string>) => data)
 					.catch((error) => {
 							const result: ResponseData<string> = {
+									isSuccessful: false,
+									errorMessage: 'Connection failed!',
+							};
+
+							return result;
+					});
+	}
+
+	leaveChatRoom(): Promise<ResponseData<boolean>> {
+		return this.connection.invoke('LeaveRoom')
+				.then((data: ResponseData<boolean>) => data)
+				.catch((error) => {
+							const result: ResponseData<boolean> = {
 									isSuccessful: false,
 									errorMessage: 'Connection failed!',
 							};
