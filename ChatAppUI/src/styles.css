@@ -21,7 +21,6 @@
     inset 0 -1px 0 rgba(255, 255, 255, 0.1),
     inset 0 0 0px 0px rgba(255, 255, 255, 0);
   position: relative;
-  overflow: hidden;
 }
 
 .glass-card-no-shadow {
@@ -31,5 +30,12 @@
   border-radius: 20px;
   border: 1px solid rgba(255, 255, 255, 0.3);
   position: relative;
-  overflow: hidden;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: var(--color-tertiary); /* Tailwind blue-400 */
+  border-radius: 9999px;
 }

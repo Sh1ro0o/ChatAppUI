@@ -4,10 +4,11 @@ import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } 
 import { MessageRequest } from '../../models/requests/message.request';
 import { ActivatedRoute } from '@angular/router';
 import { MessageData } from '../../models/data/message-data';
+import { UserMessageComponent } from './user-message/user-message.component';
 
 @Component({
   selector: 'app-chat-room',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, UserMessageComponent],
   templateUrl: './chat-room.component.html',
   styleUrl: './chat-room.component.css'
 })

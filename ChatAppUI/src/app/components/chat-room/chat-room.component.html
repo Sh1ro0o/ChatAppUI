@@ -2,19 +2,10 @@
   <div class="p-[2px] glass-card container h-5/6 rounded-2xl border-3 border-white">
       <div class="h-full p-4 grid grid-rows-[auto_120px] gap-y-3 place-items-baseline">
           <!-- Messages container -->
-          <div class="w-full pt-0 pr-2 pb-2 pl-2 glass-card h-full">
-            @for (message of messages; track $index) {
-              <!-- Message -->
-              <div class="flex p-2 mt-2 justify-start items-center glass-card-no-shadow w-full min-h-[60px]">
-                <!-- Image -->
-                <div class="h-[50px] w-[50px] bg-rose-300 rounded-full">
-                  
-                </div>
-                <!-- Text -->
-                <div class="w-full ml-[15px] text-shadow-dark">
-                  {{ message.message }}
-                </div>
-              </div>
+          <div class="w-full max-h-full pt-0 pr-2 pb-2 pl-2 glass-card overflow-y-auto custom-scrollbar">
+            @for (messageData of messages; track $index) {
+              <!-- User Message -->
+              <app-user-message username="TropicalPanda12354" [message]="messageData.message"></app-user-message>
             }
           </div>
 
