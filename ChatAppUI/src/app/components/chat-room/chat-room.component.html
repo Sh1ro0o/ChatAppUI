@@ -5,7 +5,7 @@
           <div class="w-full h-full pt-0 pr-2 pb-2 pl-2 glass-card overflow-y-auto custom-scrollbar">
             @for (messageData of messages; track $index) {
               <!-- User Message -->
-              <app-user-message username="TropicalPanda12354" [message]="messageData.message"></app-user-message>
+              <app-user-message [username]="messageData.username" [message]="messageData.message"></app-user-message>
             }
           </div>
 

@@ -2,5 +2,7 @@
   --color-primary: #EE9CA7;
   --color-secondary: #FFDDE1;
   --color-tertiary: #edb1b9;
-  --text-shadow-primary: red;
+  --border: #fbb5e3;
+  --glow-primary: #b578b6;
+  --text-shadow-primary: rgb(255, 0, 149);
 }

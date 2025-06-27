@@ -14,7 +14,7 @@ export class AppComponent {
   title = 'ChatAppUI';
   routes = ROUTES
 
-  chatService = inject(ChatService);
+  readonly chatService = inject(ChatService);
 
   connectToServer() {
     this.chatService.connectionStart()

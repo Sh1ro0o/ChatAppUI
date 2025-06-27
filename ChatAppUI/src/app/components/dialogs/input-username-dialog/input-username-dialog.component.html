@@ -1,0 +1,27 @@
+<div class="h-full w-full border-3 rounded-2xl bg-gradient-to-t border-[var(--border)] from-[var(--color-tertiary)] to-[var(--color-primary)] shadow-[inset_0_0_30px_var(--glow-primary)]">
+  <div class="h-full w-full p-4 grid place-items-center">
+
+    <!-- Username -->
+    <div>
+      <h1 class="text-shadow-dark w-full text-white">Username:</h1>
+      <input
+        class="w-75 h-[50px] p-2 border-b-3 border-b-[var(--border)] focus:outline-none focus:border-white text-shadow-primary text-white"
+        type="text"
+        maxlength="25"
+        [(ngModel)]="username"/>
+    </div>
+
+    <!-- Picture selector -->
+    <div>
+      <h1>test</h1>
+    </div>
+
+    <!-- OK -->
+    <div>
+      <button class="w-25 bg-[var(--color-tertiary)] hover:bg-[var(--color-primary)] p-3 rounded-4xl border-3 border-white text-white
+									  cursor-pointer shadow-[0_0_50px_white] outline-pink-300 hover:border-amber-50 text-shadow-primary"
+            (click)="onSubmit()">OK</button>
+    </div>
+
+  </div>
+</div>

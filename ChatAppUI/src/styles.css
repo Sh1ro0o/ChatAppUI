@@ -36,6 +36,11 @@
   width: 8px;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: var(--color-tertiary); /* Tailwind blue-400 */
+  background-color: var(--color-tertiary);
   border-radius: 9999px;
+}
+
+.rounded-dialog {
+  border-radius: 15px !important;
+  overflow: hidden;
 }

@@ -5,6 +5,8 @@ import { MessageRequest } from '../../models/requests/message.request';
 import { ActivatedRoute } from '@angular/router';
 import { MessageData } from '../../models/data/message-data';
 import { UserMessageComponent } from './user-message/user-message.component';
+import { LocalStorageService } from '../../services/local-storage.service';
+import { LocalStorageKeys } from '../../enums/local-storage-keys.enum';
 
 @Component({
   selector: 'app-chat-room',
@@ -15,16 +17,19 @@ import { UserMessageComponent } from './user-message/user-message.component';
 export class ChatRoomComponent implements OnInit, OnDestroy {
   sendMessageForm!: FormGroup;
   chatRoomName: string = "";
+  username: string = "";
 
   //message data
   messages: MessageData[] = [];
 
-  private chatService = inject(ChatService);
-  private fb = inject(FormBuilder);
-  private route = inject(ActivatedRoute);
+  private readonly chatService = inject(ChatService);
+  private readonly localStorageService = inject(LocalStorageService);
+  private readonly fb = inject(FormBuilder);
+  private readonly route = inject(ActivatedRoute);
 
   ngOnInit(): void {
     this.chatRoomName = this.route.snapshot.paramMap.get('roomCode') ?? '';
+    this.username = this.localStorageService.get<string>(LocalStorageKeys.USERNAME) ?? 'User';
 
     this.sendMessageForm = this.fb.group({
       newMessage: ['', Validators.required]
@@ -52,12 +57,12 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
       const trimmedMessage = newMessage.trim();
 
       if(trimmedMessage) {
-        let messageRequest: MessageRequest = new MessageRequest(this.chatRoomName, 'Me', trimmedMessage);
+        let messageRequest: MessageRequest = new MessageRequest(this.chatRoomName, this.username, trimmedMessage);
 
         this.chatService.sendMessage(messageRequest)
           .then((data) => {
             if(data.isSuccessful) {
-              this.messages.push({message: trimmedMessage, username: 'Me'} as MessageData);
+              this.messages.push({message: trimmedMessage, username: this.username} as MessageData);
               messageControl?.setValue('');
             }
             else {
