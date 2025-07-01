@@ -2,15 +2,19 @@ import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { ChatService } from '../../services/chat.service';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MessageRequest } from '../../models/requests/message.request';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MessageData } from '../../models/data/message-data';
 import { UserMessageComponent } from './user-message/user-message.component';
-import { LocalStorageService } from '../../services/local-storage.service';
-import { LocalStorageKeys } from '../../enums/local-storage-keys.enum';
+import { MatDialog } from '@angular/material/dialog';
+import { InputUsernameDialogComponent } from '../dialogs/input-username-dialog/input-username-dialog.component';
+import { ROUTES } from '../../shared/constants/routes';
+import { MessageDataType } from '../../enums/message-data-types.enum';
+import { SystemMessageRequest } from '../../models/requests/system-message.request';
+import { SystemMessageComponent } from './system-message/system-message.component';
 
 @Component({
   selector: 'app-chat-room',
-  imports: [ReactiveFormsModule, UserMessageComponent],
+  imports: [ReactiveFormsModule, UserMessageComponent, SystemMessageComponent],
   templateUrl: './chat-room.component.html',
   styleUrl: './chat-room.component.css'
 })
@@ -18,32 +22,80 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
   sendMessageForm!: FormGroup;
   chatRoomName: string = "";
   username: string = "";
+  messageDataTypeEnum = MessageDataType;
+  ROUTES = ROUTES;
 
   //message data
   messages: MessageData[] = [];
 
   private readonly chatService = inject(ChatService);
-  private readonly localStorageService = inject(LocalStorageService);
   private readonly fb = inject(FormBuilder);
   private readonly route = inject(ActivatedRoute);
+  private readonly dialog = inject(MatDialog);
+  private readonly router = inject(Router);
 
   ngOnInit(): void {
     this.chatRoomName = this.route.snapshot.paramMap.get('roomCode') ?? '';
-    this.username = this.localStorageService.get<string>(LocalStorageKeys.USERNAME) ?? 'User';
+    this.username = 'User';
 
     this.sendMessageForm = this.fb.group({
       newMessage: ['', Validators.required]
     });
 
-    //subscribe to new messages received
-    this.chatService.isNewMessageReceived$.subscribe({
-      next: (receivedMessage: MessageData) => {
-        this.messages.push(receivedMessage);
-      },
-      error: (err) => {
-        console.error(err);
+    //input username dialog
+    const dialogRef = this.dialog.open(InputUsernameDialogComponent, {
+      width: '400px',
+      height: '400px',
+      disableClose: true,
+      panelClass: 'rounded-dialog',
+    });
+
+    dialogRef.afterClosed().subscribe({
+      next: (username: string) => {
+        this.username = username;
+        //Notify others user has joined
+        let systemMessageRequest: SystemMessageRequest = new SystemMessageRequest(this.chatRoomName, this.username);
+        this.chatService.notifyUserJoined(systemMessageRequest)
+          .then((data) => {
+            if(data.isSuccessful) {
+              this.messages.push({
+                username: this.username, 
+                message: `${this.username} has joined!`,
+                type: MessageDataType.System
+              } as MessageData);
+            }
+            else {
+              this.router.navigate([this.ROUTES.HOME]); //redirect home if failed
+            }
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+
+        //subscribe to new user joining the chat room
+        this.chatService.hasNewUserJoined$.subscribe({
+          next: (systemMessageData: MessageData) => {
+            console.log('notified!')
+            this.messages.push(systemMessageData);
+          },
+          error: (err) => {
+            console.error(err);
+          }
+        });
+
+        //subscribe to new messages received
+        this.chatService.isNewMessageReceived$.subscribe({
+          next: (receivedMessage: MessageData) => {
+            this.messages.push(receivedMessage);
+          },
+          error: (err) => {
+            console.error(err);
+          }
+        });
       }
-    })
+    });
+
+    
   }
 
   ngOnDestroy(): void {
@@ -62,7 +114,11 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
         this.chatService.sendMessage(messageRequest)
           .then((data) => {
             if(data.isSuccessful) {
-              this.messages.push({message: trimmedMessage, username: this.username} as MessageData);
+              this.messages.push({
+                message: trimmedMessage, 
+                username: this.username, 
+                type: MessageDataType.User
+              } as MessageData);
               messageControl?.setValue('');
             }
             else {
