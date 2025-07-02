@@ -7,7 +7,7 @@ import { Router } from "@angular/router";
 import { ROUTES } from "../shared/constants/routes";
 import { MessageData } from "../models/data/message-data";
 import { MessageRequest } from "../models/requests/message.request";
-import { MessageDataType } from "../enums/message-data-types.enum";
+import { MessageTypeEnum } from "../enums/message-data-types.enum";
 import { SystemMessageRequest } from "../models/requests/system-message.request";
 
 @Injectable({
@@ -23,9 +23,6 @@ export class ChatService {
 
 	private isNewMessageReceivedSubject = new Subject<MessageData>();
 	isNewMessageReceived$: Observable<MessageData> = this.isNewMessageReceivedSubject.asObservable();
-
-	private hasNewUserJoinedSubject = new Subject<MessageData>();
-	hasNewUserJoined$: Observable<MessageData> = this.hasNewUserJoinedSubject.asObservable();
 
 	private router = inject(Router);
 
@@ -44,9 +41,6 @@ export class ChatService {
 
 		//OnMessageReceived
 		this.connection.on('ReceiveMessage', (message) => this.receiveMessage(message));
-
-		//OnUserJoined
-		this.connection.on('UserJoined', (message) => this.userJoined(message));
 	}
 
 	/************************/
@@ -126,27 +120,10 @@ export class ChatService {
 					});
 	}
 
-	notifyUserJoined(systemMessageRequest: SystemMessageRequest) {
-		return this.connection.invoke('NotifyUserJoined', systemMessageRequest)
-					.then((data: ResponseData<boolean>) => data)
-					.catch((error) => {
-							const result: ResponseData<boolean> = {
-									isSuccessful: false,
-									errorMessage: 'Failed to notify a user has joined the chat.',
-							};
-
-							return result;
-					});
-	}
-
 	/****************************/
 	/*<---- CLIENT METHODS ---->*/
 	/****************************/
 	receiveMessage(message: MessageData) {
-		this.isNewMessageReceivedSubject.next({...message, type: MessageDataType.User});
-	}
-
-	userJoined(message: MessageData) {
-		this.hasNewUserJoinedSubject.next({...message, type: MessageDataType.System});
+		this.isNewMessageReceivedSubject.next(message);
 	}
 }

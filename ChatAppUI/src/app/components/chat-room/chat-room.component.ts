@@ -8,7 +8,7 @@ import { UserMessageComponent } from './user-message/user-message.component';
 import { MatDialog } from '@angular/material/dialog';
 import { InputUsernameDialogComponent } from '../dialogs/input-username-dialog/input-username-dialog.component';
 import { ROUTES } from '../../shared/constants/routes';
-import { MessageDataType } from '../../enums/message-data-types.enum';
+import { MessageTypeEnum } from '../../enums/message-data-types.enum';
 import { SystemMessageRequest } from '../../models/requests/system-message.request';
 import { SystemMessageComponent } from './system-message/system-message.component';
 
@@ -22,7 +22,7 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
   sendMessageForm!: FormGroup;
   chatRoomName: string = "";
   username: string = "";
-  messageDataTypeEnum = MessageDataType;
+  messageTypeEnum = MessageTypeEnum;
   ROUTES = ROUTES;
 
   //message data
@@ -42,7 +42,7 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
       newMessage: ['', Validators.required]
     });
 
-    //input username dialog
+    //Input username dialog
     const dialogRef = this.dialog.open(InputUsernameDialogComponent, {
       width: '400px',
       height: '400px',
@@ -55,13 +55,13 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
         this.username = username;
         //Notify others user has joined
         let systemMessageRequest: SystemMessageRequest = new SystemMessageRequest(this.chatRoomName, this.username);
-        this.chatService.notifyUserJoined(systemMessageRequest)
+        this.chatService.sendMessage(systemMessageRequest)
           .then((data) => {
             if(data.isSuccessful) {
               this.messages.push({
                 username: this.username, 
                 message: `${this.username} has joined!`,
-                type: MessageDataType.System
+                type: MessageTypeEnum.System
               } as MessageData);
             }
             else {
@@ -71,17 +71,6 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
           .catch((error) => {
             console.error(error);
           });
-
-        //subscribe to new user joining the chat room
-        this.chatService.hasNewUserJoined$.subscribe({
-          next: (systemMessageData: MessageData) => {
-            console.log('notified!')
-            this.messages.push(systemMessageData);
-          },
-          error: (err) => {
-            console.error(err);
-          }
-        });
 
         //subscribe to new messages received
         this.chatService.isNewMessageReceived$.subscribe({
@@ -117,8 +106,9 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
               this.messages.push({
                 message: trimmedMessage, 
                 username: this.username, 
-                type: MessageDataType.User
+                type: MessageTypeEnum.User
               } as MessageData);
+
               messageControl?.setValue('');
             }
             else {

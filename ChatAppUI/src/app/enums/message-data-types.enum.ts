@@ -1,4 +1,4 @@
-export enum MessageDataType {
-  System = 0,
-  User = 1,
+export enum MessageTypeEnum {
+  System = 'system',
+  User = 'user',
 }
