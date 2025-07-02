@@ -3,14 +3,15 @@ import { ChatService } from '../../services/chat.service';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MessageRequest } from '../../models/requests/message.request';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MessageData } from '../../models/data/message-data';
+import { MessageData } from './models/message-data';
 import { UserMessageComponent } from './user-message/user-message.component';
 import { MatDialog } from '@angular/material/dialog';
 import { InputUsernameDialogComponent } from '../dialogs/input-username-dialog/input-username-dialog.component';
 import { ROUTES } from '../../shared/constants/routes';
-import { MessageTypeEnum } from '../../enums/message-data-types.enum';
-import { SystemMessageRequest } from '../../models/requests/system-message.request';
+import { MessageTypeEnum } from './enums/message-type.enum';
 import { SystemMessageComponent } from './system-message/system-message.component';
+import { SystemMessages } from './messages/system-messages';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-chat-room',
@@ -24,6 +25,9 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
   username: string = "";
   messageTypeEnum = MessageTypeEnum;
   ROUTES = ROUTES;
+
+  //Subscriptions
+  private newMessageSub!: Subscription;
 
   //message data
   messages: MessageData[] = [];
@@ -54,13 +58,13 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
       next: (username: string) => {
         this.username = username;
         //Notify others user has joined
-        let systemMessageRequest: SystemMessageRequest = new SystemMessageRequest(this.chatRoomName, this.username);
+        const systemMessageRequest: MessageRequest = new MessageRequest(this.chatRoomName, this.messageTypeEnum.System ,this.username, SystemMessages.joined(this.username));
         this.chatService.sendMessage(systemMessageRequest)
           .then((data) => {
             if(data.isSuccessful) {
               this.messages.push({
-                username: this.username, 
-                message: `${this.username} has joined!`,
+                username: this.username,
+                message: SystemMessages.joined(this.username),
                 type: MessageTypeEnum.System
               } as MessageData);
             }
@@ -73,8 +77,9 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
           });
 
         //subscribe to new messages received
-        this.chatService.isNewMessageReceived$.subscribe({
+        this.newMessageSub = this.chatService.isNewMessageReceived$.subscribe({
           next: (receivedMessage: MessageData) => {
+            console.log(receivedMessage);
             this.messages.push(receivedMessage);
           },
           error: (err) => {
@@ -88,7 +93,7 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.chatService.leaveChatRoom();
+    this.newMessageSub.unsubscribe();
   }
 
   onSubmit(): void {
@@ -98,7 +103,7 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
       const trimmedMessage = newMessage.trim();
 
       if(trimmedMessage) {
-        let messageRequest: MessageRequest = new MessageRequest(this.chatRoomName, this.username, trimmedMessage);
+        const messageRequest: MessageRequest = new MessageRequest(this.chatRoomName, MessageTypeEnum.User ,this.username, trimmedMessage);
 
         this.chatService.sendMessage(messageRequest)
           .then((data) => {
@@ -120,5 +125,25 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
           });
       }
     }
+  }
+
+  onLeave(): void {
+    //leave chatroom and notify others
+    const messageRequest: MessageRequest = new MessageRequest(this.chatRoomName, MessageTypeEnum.System ,this.username, SystemMessages.left(this.username));
+    this.chatService.sendMessage(messageRequest)
+      .then((data) => {
+        if (data.isSuccessful) {
+          this.chatService.leaveChatRoom()
+            .catch((error) => {
+              this.chatService.connectionStop();
+          });
+        }
+      })
+      .catch((error) => {
+        console.error('Leave error', error);
+
+        // Fallback ensure connection is stopped if leave fails
+        this.chatService.connectionStop();
+      });
   }
 }

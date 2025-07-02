@@ -5,10 +5,8 @@ import { ResponseData } from "../models/responses/response-data";
 import { BehaviorSubject, Observable, Subject } from "rxjs";
 import { Router } from "@angular/router";
 import { ROUTES } from "../shared/constants/routes";
-import { MessageData } from "../models/data/message-data";
+import { MessageData } from "../components/chat-room/models/message-data";
 import { MessageRequest } from "../models/requests/message.request";
-import { MessageTypeEnum } from "../enums/message-data-types.enum";
-import { SystemMessageRequest } from "../models/requests/system-message.request";
 
 @Injectable({
   providedIn: 'root',
