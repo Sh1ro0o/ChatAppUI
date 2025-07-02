@@ -1,5 +1,26 @@
-<div class="w-screen h-screen flex justify-center items-center">
-  <div class="p-[2px] glass-card container h-5/6 rounded-2xl border-3 border-white">
+<div class="w-screen h-[100vh] flex justify-center items-center">
+  <div class="p-[2px] glass-card container h-5/6 rounded-2xl border-3 border-white relative">
+      <!-- Leave button-->
+      <div class="absolute top-[-50px]">
+        <button class="h-[40px] w-[100px] bg-gradient-to-r from-[var(--color-tertiary)] to-[var(--color-primary)] pl-2 pr-2 rounded-4xl border-3 border-[var(--border)] cursor-pointer
+                       shadow-[0_0_50px_white] bg-[length:200%_150%] bg-left hover:bg-right transition-background-position duration-700 ease-in-out text-shadow-dark"
+                [routerLink]="ROUTES.HOME">
+          <div class="flex justify-evenly items-center">
+            <div>Leave</div>
+            <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <defs>
+                <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+                  <feDropShadow dx="1" dy="1" stdDeviation="1" flood-color="black" />
+                </filter>
+              </defs>
+              <g filter="url(#shadow)">
+                <path d="M10.09 15.59 11.5 17l5-5-5-5-1.41 1.41L12.67 11H3v2h9.67l-2.58 2.59ZM19 3H5a2 2 0 0 0-2 2v4h2V5h14v14H5v-4H3v4a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2Z"/>
+              </g>
+            </svg>
+          </div>
+        </button>
+      </div>
+      <!-- Messages -->
       <div class="h-full p-4 grid grid-rows-[auto_120px] gap-y-3 place-items-baseline">
           <!-- Messages container -->
           <div class="w-full h-full pt-0 pr-2 pb-2 pl-2 glass-card overflow-y-auto custom-scrollbar">

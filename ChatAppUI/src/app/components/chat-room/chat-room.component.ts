@@ -2,7 +2,7 @@ import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { ChatService } from '../../services/chat.service';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MessageRequest } from '../../models/requests/message.request';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MessageData } from './models/message-data';
 import { UserMessageComponent } from './user-message/user-message.component';
 import { MatDialog } from '@angular/material/dialog';
@@ -15,7 +15,7 @@ import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-chat-room',
-  imports: [ReactiveFormsModule, UserMessageComponent, SystemMessageComponent],
+  imports: [ReactiveFormsModule, RouterModule, UserMessageComponent, SystemMessageComponent],
   templateUrl: './chat-room.component.html',
   styleUrl: './chat-room.component.css'
 })
@@ -36,7 +36,7 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
   private readonly fb = inject(FormBuilder);
   private readonly route = inject(ActivatedRoute);
   private readonly dialog = inject(MatDialog);
-  private readonly router = inject(Router);
+  readonly router = inject(Router);
 
   ngOnInit(): void {
     this.chatRoomName = this.route.snapshot.paramMap.get('roomCode') ?? '';
@@ -125,23 +125,30 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
     }
   }
 
-  onLeave(): void {
-    //leave chatroom and notify others
-    const messageRequest: MessageRequest = new MessageRequest(this.chatRoomName, MessageTypeEnum.System ,this.username, SystemMessages.left(this.username));
-    this.chatService.sendMessage(messageRequest)
-      .then((data) => {
-        if (data.isSuccessful) {
-          this.chatService.leaveChatRoom()
-            .catch((error) => {
-              this.chatService.connectionStop();
-          });
-        }
-      })
-      .catch((error) => {
-        console.error('Leave error', error);
+  async canDeactivate(): Promise<boolean> {
+    try {
+      const messageRequest = new MessageRequest(
+        this.chatRoomName,
+        MessageTypeEnum.System,
+        this.username,
+        SystemMessages.left(this.username)
+      );
 
-        // Fallback ensure connection is stopped if leave fails
-        this.chatService.connectionStop();
-      });
+      const data = await this.chatService.sendMessage(messageRequest);
+
+      if (data.isSuccessful) {
+        try {
+          await this.chatService.leaveChatRoom();
+        } catch {
+          this.chatService.connectionStop();
+        }
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('Leave error', error);
+      this.chatService.connectionStop();
+      return false; 
+    }
   }
 }

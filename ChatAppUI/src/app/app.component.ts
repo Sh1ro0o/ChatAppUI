@@ -11,7 +11,7 @@ import { CommonModule } from '@angular/common';
   styleUrl: './app.component.css'
 })
 export class AppComponent {
-  title = 'ChatAppUI';
+  title = 'Chat';
   routes = ROUTES
 
   readonly chatService = inject(ChatService);
