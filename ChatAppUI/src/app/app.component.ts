@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { ROUTES } from './shared/constants/routes';
 import { ChatService } from './services/chat.service';
@@ -25,6 +25,6 @@ export class AppComponent {
         else {
           console.log('connection failed!!!!');
         }
-    })
+    });
   }
 }

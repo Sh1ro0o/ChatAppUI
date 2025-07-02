@@ -15,6 +15,7 @@ export class ChatRoomGuard implements CanActivate {
 	private chatService = inject(ChatService);
 
 	async canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<boolean | UrlTree> {
+		console.log('chat room guard');
 
 		const roomCode = route.params['roomCode'];
 		if (!roomCode) {

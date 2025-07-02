@@ -88,8 +88,6 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
         });
       }
     });
-
-    
   }
 
   ngOnDestroy(): void {

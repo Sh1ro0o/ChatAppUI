@@ -4,12 +4,20 @@ import { ConnectedGuard } from './guards/connected.guard';
 
 export const routes: Routes = [
     {
+    path: '',
+    children: [
+      {
         path: '',
-        loadComponent: () => import('./components/home/home.component').then((m) => m.HomeComponent),
-    },
-    {
+        loadComponent: () =>
+          import('./components/home/home.component').then((m) => m.HomeComponent),
+        canActivate: [ConnectedGuard]
+      },
+      {
         path: 'chat-room/:roomCode',
-        loadComponent: () => import('./components/chat-room/chat-room.component').then((m) => m.ChatRoomComponent),
+        loadComponent: () =>
+          import('./components/chat-room/chat-room.component').then((m) => m.ChatRoomComponent),
         canActivate: [ChatRoomGuard]
-    }
+      }
+    ]
+  }
 ];

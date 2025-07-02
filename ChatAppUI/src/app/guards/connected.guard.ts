@@ -14,6 +14,7 @@ export class ConnectedGuard implements CanActivate {
 
 	async canActivate(): Promise<boolean | UrlTree> {
 		//Connection check
+		console.log('connected guard');
 		let isConnected = await firstValueFrom(this.chatService.isConnected$);
 		if (isConnected) {
 			return true;
