@@ -16,6 +16,9 @@ import { ThemeSelectorComponent } from '../shared/theme-selector/theme-selector.
 export class HomeComponent {
   roomName: string = '';
   ROUTES = ROUTES;
+
+  //extra
+  showInvCodeInput: boolean = false;
     
   private readonly chatService = inject(ChatService);
   private readonly router = inject(Router);
@@ -35,8 +38,12 @@ export class HomeComponent {
   }
 
   onJoinRoom(): void {
+    if (!this.showInvCodeInput) {
+      this.showInvCodeInput = true;
+      return;
+    }
+
     if (this.roomName) {
-      console.log('navigationg');
       this.router.navigate([this.ROUTES.CHAT_ROOM, this.roomName]);
     }
   }

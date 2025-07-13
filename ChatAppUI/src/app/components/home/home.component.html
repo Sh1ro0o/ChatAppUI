@@ -1,4 +1,4 @@
-<div class="h-[60vh] flex justify-evenly items-end flex-wrap">
+<div class="h-[50vh] flex justify-evenly items-end flex-wrap">
 	<div>
     <button class="bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] p-3 rounded-4xl border-3 cursor-pointer shadow-[0_0_50px_white]
 									 outline-2 outline-[var(--border-outline)]
@@ -10,11 +10,14 @@
 									 outline-2 outline-[var(--border-outline)]
                    bg-[length:200%_150%] bg-left hover:bg-right hover:border-amber-50 transition-background-position duration-700 ease-in-out text-shadow-primary"
             (click)="onJoinRoom()">JOIN ROOM</button>
-		  <input class="w-75 ml-4 px-4 py-2 border-3 border-[var(--color-primary)] rounded-xl shadow-sm focus:outline-none focus:border-white text-shadow-primary"
+		@if (showInvCodeInput) {
+			<input class="w-75 ml-4 px-4 py-2 border-3 border-[var(--color-primary)] rounded-xl shadow-sm focus:outline-none focus:border-white text-shadow-primary"
 				type="text" 
+				placeholder="Invitation code..."
 				[(ngModel)]="roomName"/>
+		}
 	</div>
 </div>
-<div class="h-[35vh] flex w-full justify-evenly align-middle items-center flex-wrap">
+<div class="h-[35vh] flex w-full justify-evenly align-middle items-end flex-wrap">
 	<app-theme-selector></app-theme-selector>
 </div>
