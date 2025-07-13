@@ -125,6 +125,7 @@ export class ChatRoomComponent implements OnInit, OnDestroy {
     }
   }
 
+  //leaveRoomGuard
   async canDeactivate(): Promise<boolean> {
     try {
       const messageRequest = new MessageRequest(

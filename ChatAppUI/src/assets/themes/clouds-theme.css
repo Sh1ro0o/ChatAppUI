@@ -1,0 +1,10 @@
+:root.clouds-theme {
+  --color-primary: #6CA0DC;
+  --color-secondary: #D0E7FF;
+  --color-tertiary: #A3C7E6;
+  --border: #88BDE5;
+  --border-secondary: #B3D4EF;
+  --border-outline: #4A90E2;
+  --glow-primary: #7FB3FF;
+  --text-shadow-primary: rgba(0, 119, 255);
+}

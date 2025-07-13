@@ -1,0 +1,10 @@
+:root.midnight-theme {
+  --color-primary: #555587;
+  --color-secondary: #2e2e3f;
+  --color-tertiary: #3a3a4d;
+  --border: #444459;
+  --border-secondary: #e1e1e1;
+  --border-outline: #a57bf3;
+  --glow-primary: #8f6bd1;
+  --text-shadow-primary: rgba(147, 112, 219); 
+}

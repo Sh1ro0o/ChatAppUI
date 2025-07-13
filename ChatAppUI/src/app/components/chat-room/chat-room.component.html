@@ -3,7 +3,7 @@
       <!-- Leave button-->
       <div class="absolute top-[-50px]">
         <button class="h-[40px] w-[100px] bg-gradient-to-r from-[var(--color-tertiary)] to-[var(--color-primary)] pl-2 pr-2 rounded-4xl border-3 border-[var(--border)] cursor-pointer
-                       shadow-[0_0_50px_white] bg-[length:200%_150%] bg-left hover:bg-right transition-background-position duration-700 ease-in-out text-shadow-dark"
+                       shadow-[0_0_10px_white] bg-[length:200%_150%] bg-left hover:bg-right transition-background-position duration-700 ease-in-out text-shadow-dark"
                 [routerLink]="ROUTES.HOME">
           <div class="flex justify-evenly items-center">
             <div>Leave</div>
@@ -40,7 +40,7 @@
           <div class="w-full h-full">
               <label for="chat" class="sr-only">Your message</label>
               <div [formGroup]="sendMessageForm" class="flex items-center pr-2 py-2 rounded-lg glass-card">
-                  <textarea rows="4" class="block resize-none bg-[var(--color-tertiary)] mx-4 p-2.5 w-full text-sm rounded-lg border border-white focus-visible:border-red-400" placeholder="Your message..."
+                  <textarea rows="4" class="block resize-none bg-[var(--color-tertiary)] mx-4 p-2.5 w-full text-sm rounded-lg border border-white" placeholder="Your message..."
                             formControlName="newMessage"
                             (keydown.enter)="onSubmit()">
                   </textarea>

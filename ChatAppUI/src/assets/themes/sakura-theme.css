@@ -3,6 +3,8 @@
   --color-secondary: #FFDDE1;
   --color-tertiary: #edb1b9;
   --border: #fbb5e3;
+  --border-secondary: #e1e1e1;
+  --border-outline: #f99ad7;
   --glow-primary: #b578b6;
   --text-shadow-primary: rgb(255, 0, 149);
 }

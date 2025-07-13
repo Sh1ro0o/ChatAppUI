@@ -1,0 +1,10 @@
+:root.ocean-purple-theme {
+  --color-primary: #8c3ea3;
+  --color-secondary: #4a96d4;
+  --color-tertiary: #6e5ba5;
+  --border: #7e64a6;
+  --border-secondary: #74aed8;
+  --border-outline: #3f78af;
+  --glow-primary: #5c19ae;
+  --text-shadow-primary: rgba(102, 175, 233);
+}

@@ -5,10 +5,11 @@ import { Router, RouterModule } from '@angular/router';
 import { ROUTES } from '../../shared/constants/routes';
 import { MatDialog } from '@angular/material/dialog';
 import { ResponseData } from '../../models/responses/response-data';
+import { ThemeSelectorComponent } from '../shared/theme-selector/theme-selector.component';
 
 @Component({
   selector: 'app-home',
-  imports: [FormsModule, RouterModule],
+  imports: [FormsModule, RouterModule, ThemeSelectorComponent],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })

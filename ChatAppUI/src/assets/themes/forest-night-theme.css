@@ -1,0 +1,10 @@
+:root.forest-night-theme {
+  --color-primary: #001602;
+  --color-secondary: #08612a;
+  --color-tertiary: #2f6739;
+  --border: #2F4F2F;
+  --border-secondary: #3D6B3D;
+  --border-outline: #4CAF50;
+  --glow-primary: #81C784;
+  --text-shadow-primary: rgba(0, 255, 0, 0.2);
+}
